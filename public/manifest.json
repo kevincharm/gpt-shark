@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "gpt-shark",
+  "version": "1.0.0-alpha",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "permissions": [
+    "activeTab",
+    "webRequest",
+    "<all_urls>"
+  ],
+  "browser_action": {
+    "default_icon": "favicon.ico",
+    "default_title": "gpt-shark",
+    "default_popup": "popup/choose_beast.html"
+  }
+}
