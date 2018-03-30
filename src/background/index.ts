@@ -14,16 +14,17 @@ function startListening() {
 
 async function webRequestListener(requestDetails: any) {
     const url = new URL(requestDetails.url)
+
+    // searchParams is a Set. Creating an array from a Set returns Array<[key, value]>
     const paramArr = Array.from(url.searchParams as any) as Array<[string, string]>
     const params: { [key: string]: string } = {}
     for (const paramTuple of paramArr) {
         const [key, value] = paramTuple
         params[key] = value
     }
-    const gptMessage: GptMessage = {
-        kind: 'gpt-ad-call',
-        payload: params
-    }
+
+    const gptMessage: GptMessage = { kind: 'gpt-ad-call', payload: params }
+
     console.log('[gpt-shark] sending message', gptMessage)
     await sendMessage(gptMessage)
 }
