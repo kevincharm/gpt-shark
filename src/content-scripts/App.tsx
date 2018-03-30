@@ -64,9 +64,24 @@ function mapSlots(slots: GptSlot[]) {
             })
 
         const onClick = () => {
-            const id = `google_ads_iframe_${slot.adUnitPath}_${s}`
-            const iframe = document.getElementById(id)
-            console.log(iframe)
+            const iframes = Array.from(document.querySelectorAll('iframe[id^="google_ads_iframe_"]'))
+            if (!iframes.length) {
+                return
+            }
+
+            let matchedIframe = null
+            for (const iframe of iframes) {
+                const scripts = Array.from((iframe as any).contentWindow.document.querySelectorAll('script'))
+                const matchedScripts = scripts.filter((script: any) => script.text && script.text.match(slot.key))
+                if (!matchedScripts.length) {
+                    continue
+                }
+                matchedIframe = iframe
+            }
+
+            if (matchedIframe) {
+                console.log('[gpt-shark] Found GPT iframe:', matchedIframe)
+            }
         }
 
         return (
