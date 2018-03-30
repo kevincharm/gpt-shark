@@ -7,17 +7,25 @@ export interface GptPayload {
     cust_params: string
 }
 
+export interface GptSlot {
+    correlator: string
+    sizes: string[]
+    targeting: {
+        [key: string]: string
+    }
+}
+
 export function parseGptPayload(payload: GptPayload) {
     const slotSizes = payload.prev_iu_szs.split(',')
     const slotTargeting = payload.prev_scp.split('|')
     const slotCount = slotTargeting.length
-    const slots = []
+    const slots: GptSlot[] = []
     for (let i = 0; i < slotCount; i++) {
-        const size = slotSizes[i]
+        const sizes = parseSizeString(slotSizes[i])
         const targeting = parseTargetingString(slotTargeting[i])
         slots.push({
             correlator: payload.correlator,
-            size,
+            sizes,
             targeting
         })
     }
@@ -25,7 +33,12 @@ export function parseGptPayload(payload: GptPayload) {
     return slots
 }
 
-export function parseTargetingString(targeting: string) {
+function parseSizeString(rawSizes: string) {
+    const sizes = rawSizes.split('|')
+    return sizes
+}
+
+function parseTargetingString(targeting: string) {
     const keyValues = targeting.split('&')
     const map: { [key: string]: string } = {}
     for (const kv of keyValues) {
