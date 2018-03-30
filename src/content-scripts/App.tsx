@@ -63,11 +63,18 @@ function mapSlots(slots: GptSlot[]) {
                 )
             })
 
+        const onClick = () => {
+            const id = `google_ads_iframe_${slot.adUnitPath}_${s}`
+            const iframe = document.getElementById(id)
+            console.log(iframe)
+        }
+
         return (
             <div className="gpt-shark-console__slot" key={s}>
                 <div>{slot.sizes.join(',')}</div>
                 <div>correlator: {slot.correlator}</div>
                 {targeting}
+                <button onClick={onClick}>Highlight</button>
             </div>
         )
     })

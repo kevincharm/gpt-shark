@@ -16,6 +16,7 @@ export interface GptRequest {
 export interface GptSlot {
     correlator: string
     key: string
+    adUnitPath: string
     sizes: string[]
     targeting: {
         [key: string]: string
@@ -31,9 +32,11 @@ export function parseGptPayload(payload: GptPayload) {
     for (let i = 0; i < slotCount; i++) {
         const sizes = parseSizeString(slotSizes[i])
         const targeting = parseTargetingString(slotTargeting[i])
+        const adUnitPath = '/' + payload.iu_parts.split(',').join('/')
         slots.push({
             correlator: payload.correlator,
             key: keys[i],
+            adUnitPath,
             sizes,
             targeting
         })
