@@ -1,11 +1,7 @@
 import * as React from 'react'
 import voidAsyncWrapper from '../common/async-wrapper'
 import { Message } from '../common/types'
-import { parseGptPayload, GptSlot } from './gpt'
-
-interface GptRequest {
-    slots: GptSlot[]
-}
+import { parseGptPayload, GptRequest, GptSlot } from './gpt'
 
 interface State {
     requests: GptRequest[]
@@ -27,7 +23,7 @@ class App extends React.Component<{}, State> {
         if (message.kind === 'gpt-ad-call') {
             console.log('[gpt-shark]', message.payload)
             this.setState({
-                requests: [{ slots: parseGptPayload(message.payload) }].concat(this.state.requests)
+                requests: [parseGptPayload(message.payload)].concat(this.state.requests)
             })
         }
     }

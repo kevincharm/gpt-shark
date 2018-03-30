@@ -7,8 +7,12 @@ export interface GptPayload {
     cust_params: string
 }
 
-export interface GptSlot {
+export interface GptRequest {
     correlator: string
+    slots: GptSlot[]
+}
+
+export interface GptSlot {
     sizes: string[]
     targeting: {
         [key: string]: string
@@ -24,13 +28,16 @@ export function parseGptPayload(payload: GptPayload) {
         const sizes = parseSizeString(slotSizes[i])
         const targeting = parseTargetingString(slotTargeting[i])
         slots.push({
-            correlator: payload.correlator,
             sizes,
             targeting
         })
     }
 
-    return slots
+    const request: GptRequest = {
+        correlator: payload.correlator,
+        slots
+    }
+    return request
 }
 
 function parseSizeString(rawSizes: string) {
