@@ -61,7 +61,8 @@ module.exports = {
     entry: {
         polyfills: require.resolve('./polyfills'),
         main: paths.appIndexJs,
-        background: paths.appBackgroundIndexJs
+        background: paths.appBackgroundIndexJs,
+        contentScript: paths.appContentScriptJs
     },
     output: {
         // The build folder.
@@ -139,6 +140,7 @@ module.exports = {
                         include: paths.appSrc,
                         loader: require.resolve('babel-loader'),
                         options: {
+                            presets: ['@babel/preset-env'],
                             compact: true
                         }
                     },

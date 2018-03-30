@@ -6,7 +6,7 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
-    "firefox": "web-ext run -s ./build --verbose"
+    "firefox": "web-ext run -s ./build"
   },
   "dependencies": {
     "autoprefixer": "7.1.6",
@@ -47,6 +47,8 @@
     "whatwg-fetch": "2.0.3"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.0.0-beta.42",
+    "@types/firefox-webext-browser": "^58.0.2",
     "@types/jest": "^22.2.2",
     "@types/node": "^9.6.1",
     "@types/react": "^16.1.0",

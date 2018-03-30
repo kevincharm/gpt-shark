@@ -3,7 +3,20 @@ import './App.css'
 
 const logo = require('./logo.svg')
 
-class App extends React.Component {
+class App extends React.Component<{}, {}> {
+    constructor(props: any) {
+        super(props)
+    }
+
+    startHandler = async () => {
+        try {
+            const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+            await browser.tabs.sendMessage(tabs[0].id!, { command: 'start-listening' })
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     render() {
         return (
             <div className="App">
@@ -11,9 +24,7 @@ class App extends React.Component {
                     <img src={logo} className="App-logo" alt="logo" />
                     <h1 className="App-title">Welcome to React</h1>
                 </header>
-                <p className="App-intro">
-                    To get started, edit <code>src/App.tsx</code> and save to reload.
-                </p>
+                <button onClick={this.startHandler}>Test</button>
             </div>
         )
     }
