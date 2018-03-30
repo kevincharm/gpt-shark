@@ -50,12 +50,25 @@ class App extends React.Component<{}, State> {
 }
 
 function mapSlots(slots: GptSlot[]) {
-    return slots.map((slot, s) => (
-        <div className="gpt-shark-console__slot" key={s}>
-            <div>{slot.sizes.join(',')}</div>
-            <div>{JSON.stringify(slot.targeting, null, 2)}</div>
-        </div>
-    ))
+    return slots.map((slot, s) => {
+        const targeting = Object.keys(slot.targeting)
+            .filter(key => !!slot.targeting[key])
+            .map(key => {
+                return (
+                    <div key={key}>
+                        {key}: {slot.targeting[key]}
+                    </div>
+                )
+            })
+
+        return (
+            <div className="gpt-shark-console__slot" key={s}>
+                <div>{slot.sizes.join(',')}</div>
+                <div>correlator: {slot.correlator}</div>
+                {targeting}
+            </div>
+        )
+    })
 }
 
 export default App
