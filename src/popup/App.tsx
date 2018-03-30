@@ -8,13 +8,8 @@ class App extends React.Component<{}, {}> {
         super(props)
     }
 
-    startHandler = async () => {
-        try {
-            const tabs = await browser.tabs.query({ active: true, currentWindow: true })
-            await browser.tabs.sendMessage(tabs[0].id!, { command: 'start-listening' })
-        } catch (err) {
-            console.error(err)
-        }
+    showInterface = async () => {
+        // TODO: Show injected content-scripts interface
     }
 
     render() {
@@ -24,7 +19,7 @@ class App extends React.Component<{}, {}> {
                     <img src={logo} className="App-logo" alt="logo" />
                     <h1 className="App-title">Welcome to React</h1>
                 </header>
-                <button onClick={this.startHandler}>Test</button>
+                <button onClick={this.showInterface}>Test</button>
             </div>
         )
     }
