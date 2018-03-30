@@ -48,7 +48,7 @@ module.exports = {
         // require.resolve('webpack/hot/dev-server'),
         hotReload: require.resolve('react-dev-utils/webpackHotDevClient'),
         // Finally, this is your app's code:
-        main: paths.appIndexJs,
+        popup: paths.appPopupJs,
         // We include the app code last so that if there is a runtime error during
         // initialization, it doesn't blow up the WebpackDevServer client, and
         // changing JS code would still trigger a refresh.

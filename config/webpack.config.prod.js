@@ -60,7 +60,7 @@ module.exports = {
     // In production, we only want to load the polyfills and the app code.
     entry: {
         polyfills: require.resolve('./polyfills'),
-        main: paths.appIndexJs,
+        popup: paths.appPopupJs,
         background: paths.appBackgroundIndexJs,
         contentScript: paths.appContentScriptJs
     },
