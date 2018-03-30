@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom'
 import App from './App'
 import './index.css'
 
-shim()
 start()
 
 function start() {
@@ -21,18 +20,6 @@ function start() {
         height: '70vh'
     })
     ReactDOM.render(<App />, el as HTMLElement)
-}
-
-function shim() {
-    if (typeof browser === 'undefined') {
-        ;(window.browser as any) = {
-            runtime: {
-                onMessage: {
-                    addListener: () => {}
-                }
-            }
-        }
-    }
 }
 
 export {}
