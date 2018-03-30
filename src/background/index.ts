@@ -1,13 +1,11 @@
 import { BaseMessage, GptMessage } from '../common/types'
-import voidAsyncWrapper from '../common/async-wrapper'
 
 startListening()
 
 function startListening() {
     console.log('[gpt-shark] Started webRequest listener.')
-    const listener = voidAsyncWrapper(webRequestListener)
-    browser.webRequest.onBeforeRequest.removeListener(listener)
-    browser.webRequest.onBeforeRequest.addListener(listener, {
+
+    browser.webRequest.onBeforeRequest.addListener(webRequestListener, {
         urls: ['*://securepubads.g.doubleclick.net/*ads?*']
     })
 }
@@ -27,9 +25,15 @@ async function webRequestListener(requestDetails: any) {
 
     console.log('[gpt-shark] sending message', gptMessage)
     await sendMessage(gptMessage)
+
+    return {}
 }
 
 async function sendMessage(message: BaseMessage) {
-    const tabs = await browser.tabs.query({ active: true, currentWindow: true })
-    await browser.tabs.sendMessage(tabs[0].id!, message)
+    try {
+        const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+        await browser.tabs.sendMessage(tabs[0].id!, message)
+    } catch (err) {
+        console.error('[gpt-shark]', err)
+    }
 }
