@@ -22,8 +22,10 @@ class App extends React.Component<{}, State> {
         console.log('[gpt-shark] received message:', message)
         if (message.kind === 'gpt-ad-call') {
             console.log('[gpt-shark]', message.payload)
+            const parsedGptPayload = parseGptPayload(message.payload)
+
             this.setState({
-                requests: [parseGptPayload(message.payload)].concat(this.state.requests)
+                requests: [parsedGptPayload].concat(this.state.requests)
             })
         }
     }

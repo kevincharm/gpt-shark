@@ -1,5 +1,6 @@
 export interface GptPayload {
     // TODO: Be defensive
+    adks: string
     correlator: string
     iu_parts: string
     prev_iu_szs: string
@@ -14,6 +15,7 @@ export interface GptRequest {
 
 export interface GptSlot {
     correlator: string
+    key: string
     sizes: string[]
     targeting: {
         [key: string]: string
@@ -21,6 +23,7 @@ export interface GptSlot {
 }
 
 export function parseGptPayload(payload: GptPayload) {
+    const keys = payload.adks.split(',')
     const slotSizes = payload.prev_iu_szs.split(',')
     const slotTargeting = payload.prev_scp.split('|')
     const slotCount = slotTargeting.length
@@ -30,6 +33,7 @@ export function parseGptPayload(payload: GptPayload) {
         const targeting = parseTargetingString(slotTargeting[i])
         slots.push({
             correlator: payload.correlator,
+            key: keys[i],
             sizes,
             targeting
         })
