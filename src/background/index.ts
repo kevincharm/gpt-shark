@@ -1,5 +1,6 @@
 import { BaseMessage, GptMessage } from '../common/types'
 import voidAsyncWrapper from '../common/async-wrapper'
+import '../common/browser-polyfill'
 
 startListening()
 

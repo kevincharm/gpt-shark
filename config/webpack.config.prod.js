@@ -140,7 +140,7 @@ module.exports = {
                         include: paths.appSrc,
                         loader: require.resolve('babel-loader'),
                         options: {
-                            presets: ['@babel/preset-env'],
+                            presets: ['babel-preset-env'],
                             compact: true
                         }
                     },

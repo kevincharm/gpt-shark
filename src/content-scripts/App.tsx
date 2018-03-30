@@ -3,8 +3,12 @@ import voidAsyncWrapper from '../common/async-wrapper'
 import { Message } from '../common/types'
 import { parseGptPayload, GptSlot } from './gpt'
 
-interface State {
+interface GptRequest {
     slots: GptSlot[]
+}
+
+interface State {
+    requests: GptRequest[]
 }
 
 class App extends React.Component<{}, State> {
@@ -12,7 +16,7 @@ class App extends React.Component<{}, State> {
         super(props)
 
         this.state = {
-            slots: []
+            requests: []
         }
 
         browser.runtime.onMessage.addListener(voidAsyncWrapper(this.messageListener))
@@ -23,28 +27,39 @@ class App extends React.Component<{}, State> {
         if (message.kind === 'gpt-ad-call') {
             console.log('[gpt-shark]', message.payload)
             this.setState({
-                slots: parseGptPayload(message.payload).concat(this.state.slots)
+                requests: [{ slots: parseGptPayload(message.payload) }].concat(this.state.requests)
             })
         }
     }
 
-    render() {
-        const slots = this.state.slots.map((slot, i) => {
+    mapSlots() {
+        return this.state.requests.map((request, r) => {
             return (
-                <div className="gpt-shark-console__slot" key={i}>
-                    <div>{slot.sizes.join(',')}</div>
-                    <div>{JSON.stringify(slot.targeting, null, 2)}</div>
+                <div className="gpt-shark-console__request" key={r}>
+                    <div className="gpt-shark-console__request__title">New GPT Request</div>
+                    {mapSlots(request.slots)}
                 </div>
             )
         })
+    }
 
+    render() {
         return (
             <div className="gpt-shark-console">
                 <div className="gpt-shark-console__title">GPT SHARK</div>
-                <div className="gpt-shark-console__body">{slots}</div>
+                <div className="gpt-shark-console__body">{this.mapSlots()}</div>
             </div>
         )
     }
+}
+
+function mapSlots(slots: GptSlot[]) {
+    return slots.map((slot, s) => (
+        <div className="gpt-shark-console__slot" key={s}>
+            <div>{slot.sizes.join(',')}</div>
+            <div>{JSON.stringify(slot.targeting, null, 2)}</div>
+        </div>
+    ))
 }
 
 export default App

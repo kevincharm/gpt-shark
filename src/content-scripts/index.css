@@ -13,17 +13,27 @@
     position: absolute;
     height: 36px;
     width: 100%;
-    padding: 10px 12px;
+    padding: 8px 12px;
     font-size: 16px;
     background-color: #bdbdbd;
 }
 
 .gpt-shark-console__body {
     position: absolute;
-    top: 35px;
+    top: 36px;
     height: calc(100% - 36px);
     width: 100%;
     overflow-y: scroll;
+}
+
+.gpt-shark-console__request {
+    margin: 2px 2px;
+    padding: 10px 12px;
+}
+
+.gpt-shark-console__request__title {
+    font-weight: 700;
+    margin-bottom: 4px;
 }
 
 .gpt-shark-console__slot {
