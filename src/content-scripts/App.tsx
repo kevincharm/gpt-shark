@@ -27,7 +27,6 @@ class App extends React.Component<{}, State> {
     }
 
     gptAdCallHandler(message: GptMessage) {
-        console.log('[gpt-shark]', message.payload)
         const parsedGptPayload = parseGptPayload(message.payload)
         const { slots } = parsedGptPayload
 
