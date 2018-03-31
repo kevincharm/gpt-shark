@@ -2,41 +2,88 @@ import * as React from 'react'
 import { GptRequest, GptSlot } from './gpt'
 import { INT32_MAX } from '../common/constants'
 
+export interface State {
+    forceHighlight: boolean
+}
+
 export interface Props {
     request: GptRequest
 }
 
-const GptRequestItem: React.SFC<Props> = ({ request }: Props) => (
-    <div className="gpt-shark-console__request">
-        <div className="gpt-shark-console__request__title">New GPT Request</div>
-        {mapSlots(request.slots)}
-    </div>
-)
+export default class GptRequestItem extends React.Component<Props, State> {
+    constructor(props: Props, state: State) {
+        super(props, state)
+        this.state = {
+            forceHighlight: false
+        }
+    }
 
-export default GptRequestItem
+    onMouseEnter = (slot: GptSlot) => {
+        return () => {
+            highlightGptIframe(slot)()
+        }
+    }
 
-function mapSlots(slots: GptSlot[]) {
-    return slots.map((slot, s) => {
-        const targeting = Object.keys(slot.targeting)
-            .filter(key => !!slot.targeting[key])
-            .map(key => {
-                return (
-                    <div key={key}>
-                        {key}: {slot.targeting[key]}
-                    </div>
-                )
+    onMouseLeave = (slot: GptSlot) => {
+        return () => {
+            if (!this.state.forceHighlight) {
+                unhighlightGptIframe(slot)()
+            }
+        }
+    }
+
+    onClick = (slot: GptSlot) => {
+        return () => {
+            const currentState = this.state.forceHighlight
+
+            if (currentState) {
+                unhighlightGptIframe(slot)()
+            } else {
+                highlightGptIframe(slot)()
+            }
+
+            this.setState({
+                forceHighlight: !currentState
             })
+        }
+    }
 
+    mapSlots() {
+        return this.props.request.slots.map((slot, s) => {
+            const targeting = Object.keys(slot.targeting)
+                .filter(key => !!slot.targeting[key])
+                .map(key => {
+                    return (
+                        <div key={key}>
+                            {key}: {slot.targeting[key]}
+                        </div>
+                    )
+                })
+
+            return (
+                <div
+                    className="gpt-shark-console__slot"
+                    key={s}
+                    onMouseEnter={this.onMouseEnter(slot)}
+                    onMouseLeave={this.onMouseLeave(slot)}
+                >
+                    <div>{slot.sizes.join(',')}</div>
+                    <div>correlator: {slot.correlator}</div>
+                    {targeting}
+                    <button onClick={this.onClick(slot)}>Highlight</button>
+                </div>
+            )
+        })
+    }
+
+    render() {
         return (
-            <div className="gpt-shark-console__slot" key={s}>
-                <div>{slot.sizes.join(',')}</div>
-                <div>correlator: {slot.correlator}</div>
-                {targeting}
-                <button onClick={highlightGptIframe(slot)}>Highlight</button>
-                <button onClick={unhighlightGptIframe(slot)}>Unhighlight</button>
+            <div className="gpt-shark-console__request">
+                <div className="gpt-shark-console__request__title">New GPT Request</div>
+                {this.mapSlots()}
             </div>
         )
-    })
+    }
 }
 
 /**
@@ -100,7 +147,10 @@ function createHighlightElement(slot: GptSlot, iframe: HTMLIFrameElement) {
         left: `${iframe.offsetLeft}px`,
         height: `${iframeRect.height}px`,
         width: `${iframeRect.width}px`,
-        backgroundColor: 'red'
+        backgroundColor: 'rgba(255,236,179,0.8)',
+        borderStyle: 'solid',
+        borderWidth: '1px',
+        borderColor: '#ffd54f'
     })
     document.body.appendChild(highlightEl)
     console.log('[gpt-shark] append child:', highlightEl)
