@@ -32,6 +32,7 @@ function mapSlots(slots: GptSlot[]) {
                 <div>correlator: {slot.correlator}</div>
                 {targeting}
                 <button onClick={highlightGptIframe(slot)}>Highlight</button>
+                <button onClick={unhighlightGptIframe(slot)}>Unhighlight</button>
             </div>
         )
     })
@@ -42,7 +43,12 @@ function mapSlots(slots: GptSlot[]) {
  */
 function highlightGptIframe(slot: GptSlot) {
     return () => {
-        const iframes = Array.from(document.querySelectorAll('iframe[id^="google_ads_iframe_"]'))
+        const existingHighlightEl = document.getElementById(slotDivId(slot))
+        if (existingHighlightEl) {
+            return
+        }
+
+        const iframes: HTMLIFrameElement[] = Array.from(document.querySelectorAll('iframe[id^="google_ads_iframe_"]'))
         if (!iframes.length) {
             return
         }
@@ -58,8 +64,46 @@ function highlightGptIframe(slot: GptSlot) {
         }
 
         if (matchedIframe) {
-            console.log('[gpt-shark] Found GPT iframe:', matchedIframe)
-            // const iframeRect = matchedIframe.getBoundingClientRect()
+            createHighlightElement(slot, matchedIframe)
         }
     }
+}
+
+/**
+ * Finds the highlight div element for the given slot, then removes it if it exists.
+ */
+function unhighlightGptIframe(slot: GptSlot) {
+    return () => {
+        const existingHighlightEl = document.getElementById(slotDivId(slot))
+        if (!existingHighlightEl) {
+            return
+        }
+
+        existingHighlightEl.remove()
+    }
+}
+
+const INT32_MAX = Math.pow(2, 31) - 1
+
+function createHighlightElement(slot: GptSlot, iframe: HTMLIFrameElement) {
+    console.log('[gpt-shark] createHighlightElement:', slot)
+    const iframeRect = iframe.getBoundingClientRect()
+    const highlightEl = document.createElement('div')
+    highlightEl.id = slotDivId(slot)
+    Object.assign(highlightEl.style, {
+        zIndex: INT32_MAX,
+        position: 'absolute',
+        content: ' ',
+        top: `${iframeRect.top}px`,
+        left: `${iframeRect.left}px`,
+        height: `${iframeRect.height}px`,
+        width: `${iframeRect.width}px`,
+        backgroundColor: 'red'
+    })
+    document.body.appendChild(highlightEl)
+    console.log('[gpt-shark] append child:', highlightEl)
+}
+
+function slotDivId(slot: GptSlot) {
+    return `gpt-shark-highlight__${slot.key}`
 }
