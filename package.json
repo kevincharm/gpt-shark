@@ -6,7 +6,8 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
-    "firefox": "web-ext run -s ./build"
+    "firefox": "web-ext run -s ./build",
+    "zip": "web-ext build -s ./build"
   },
   "dependencies": {
     "autoprefixer": "7.1.6",
