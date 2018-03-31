@@ -20,7 +20,6 @@ class App extends React.Component<{}, State> {
     }
 
     messageListener = (message: Message) => {
-        console.log('[gpt-shark] received message:', message)
         if (message.kind === 'gpt-ad-call') {
             this.gptAdCallHandler(message)
         }
@@ -34,7 +33,14 @@ class App extends React.Component<{}, State> {
         const newSlots = slots.slice()
         while (newSlots.length) {
             const newSlot = newSlots.pop()!
-            const existing = resolvedSlots.find(oldSlot => deepEqual(newSlot.targeting, oldSlot.targeting))
+            const existing = resolvedSlots.find(oldSlot => {
+                /**
+                 * TODO: Might need to include slot.key equality here too.
+                 */
+                const sameSize = deepEqual(newSlot.sizes, oldSlot.sizes)
+                const sameTargeting = deepEqual(newSlot.targeting, oldSlot.targeting)
+                return sameSize && sameTargeting
+            })
             if (existing) {
                 const index = resolvedSlots.indexOf(existing)
                 resolvedSlots.splice(index, 1, newSlot)
