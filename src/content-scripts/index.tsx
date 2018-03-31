@@ -9,8 +9,9 @@ start()
     .catch()
 
 async function start() {
-    console.log('[gpt-shark] Loaded content script.', window.frameElement && window.frameElement.id)
+    console.log('[gpt-shark] Loaded content script.')
 
+    // Only load in top frame
     if (window.self !== window.top) {
         return
     }
