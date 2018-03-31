@@ -25,16 +25,6 @@
     overflow-y: scroll;
 }
 
-.gpt-shark-console__request {
-    margin: 2px 2px;
-    padding: 10px 12px;
-}
-
-.gpt-shark-console__request__title {
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-
 .gpt-shark-console__slot {
     margin: 2px 2px;
     padding: 10px 12px;

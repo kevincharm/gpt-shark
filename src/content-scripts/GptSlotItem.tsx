@@ -2,12 +2,13 @@ import * as React from 'react'
 import { GptSlot } from './gpt'
 import { INT32_MAX } from '../common/constants'
 
-export interface State {
-    forceHighlight: boolean
+export interface Props {
+    forceHighlightAll: boolean
+    slot: GptSlot
 }
 
-export interface Props {
-    slot: GptSlot
+export interface State {
+    forceHighlight: boolean
 }
 
 export default class GptSlotItem extends React.Component<Props, State> {
@@ -16,36 +17,44 @@ export default class GptSlotItem extends React.Component<Props, State> {
         this.state = {
             forceHighlight: false
         }
+
+        resolveHighlightVisibility(this.props.slot, this.props.forceHighlightAll || this.state.forceHighlight)
     }
 
-    onMouseEnter = (slot: GptSlot) => {
-        return () => {
-            highlightGptIframe(slot)()
+    componentWillReceiveProps(nextProps: Props) {
+        if (nextProps.forceHighlightAll === this.props.forceHighlightAll) {
+            return
+        }
+
+        const slot = this.props.slot
+        resolveHighlightVisibility(slot, nextProps.forceHighlightAll)
+
+        this.setState({
+            forceHighlight: nextProps.forceHighlightAll
+        })
+    }
+
+    onMouseEnter = () => {
+        const slot = this.props.slot
+        highlightGptIframe(slot)
+    }
+
+    onMouseLeave = () => {
+        const slot = this.props.slot
+        if (!this.state.forceHighlight) {
+            unhighlightGptIframe(slot)
         }
     }
 
-    onMouseLeave = (slot: GptSlot) => {
-        return () => {
-            if (!this.state.forceHighlight) {
-                unhighlightGptIframe(slot)()
-            }
-        }
-    }
+    onClick = () => {
+        const slot = this.props.slot
+        const currentState = this.state.forceHighlight
 
-    onClick = (slot: GptSlot) => {
-        return () => {
-            const currentState = this.state.forceHighlight
+        resolveHighlightVisibility(slot, !currentState)
 
-            if (currentState) {
-                unhighlightGptIframe(slot)()
-            } else {
-                highlightGptIframe(slot)()
-            }
-
-            this.setState({
-                forceHighlight: !currentState
-            })
-        }
+        this.setState({
+            forceHighlight: !currentState
+        })
     }
 
     render() {
@@ -64,17 +73,21 @@ export default class GptSlotItem extends React.Component<Props, State> {
         const highlightButtonLabel = this.state.forceHighlight ? 'Unhighlight' : 'Highlight'
 
         return (
-            <div
-                className="gpt-shark-console__slot"
-                onMouseEnter={this.onMouseEnter(slot)}
-                onMouseLeave={this.onMouseLeave(slot)}
-            >
+            <div className="gpt-shark-console__slot" onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                 <div>{slot.sizes.join(',')}</div>
                 <div>correlator: {slot.correlator}</div>
                 {targeting}
-                <button onClick={this.onClick(slot)}>{highlightButtonLabel}</button>
+                <button onClick={this.onClick}>{highlightButtonLabel}</button>
             </div>
         )
+    }
+}
+
+function resolveHighlightVisibility(slot: GptSlot, highlight: boolean) {
+    if (highlight) {
+        highlightGptIframe(slot)
+    } else {
+        unhighlightGptIframe(slot)
     }
 }
 
@@ -82,29 +95,27 @@ export default class GptSlotItem extends React.Component<Props, State> {
  * Finds the GPT iframe for the given slot, then highlights it.
  */
 function highlightGptIframe(slot: GptSlot) {
-    return () => {
-        const existingHighlightEl = document.getElementById(slotDivId(slot))
-        if (existingHighlightEl) {
+    const existingHighlightEl = document.getElementById(slotDivId(slot))
+    if (existingHighlightEl) {
+        return
+    }
+
+    try {
+        const rawAdsMap = document.getElementById('gpt-shark-ads-map')!.textContent
+        const adsMap = JSON.parse(rawAdsMap || '[]') as Array<{ key: string; iframeId: string }>
+        const adMap = adsMap.find(ad => ad.key === slot.key)
+        if (!adMap) {
             return
         }
 
-        try {
-            const rawAdsMap = document.getElementById('gpt-shark-ads-map')!.textContent
-            const adsMap = JSON.parse(rawAdsMap || '[]') as Array<{ key: string; iframeId: string }>
-            const adMap = adsMap.find(ad => ad.key === slot.key)
-            if (!adMap) {
-                return
-            }
+        const iframeId = `google_ads_iframe_${adMap.iframeId}`
+        const matchedIframe = document.getElementById(iframeId) as HTMLIFrameElement | null
 
-            const iframeId = `google_ads_iframe_${adMap.iframeId}`
-            const matchedIframe = document.getElementById(iframeId) as HTMLIFrameElement | null
-
-            if (matchedIframe) {
-                createHighlightElement(slot, matchedIframe)
-            }
-        } catch (err) {
-            console.error(`[gpt-shark] Couldn't find iframe!`, err)
+        if (matchedIframe) {
+            createHighlightElement(slot, matchedIframe)
         }
+    } catch (err) {
+        console.error(`[gpt-shark] Couldn't find iframe!`, err)
     }
 }
 
@@ -112,14 +123,12 @@ function highlightGptIframe(slot: GptSlot) {
  * Finds the highlight div element for the given slot, then removes it if it exists.
  */
 function unhighlightGptIframe(slot: GptSlot) {
-    return () => {
-        const existingHighlightEl = document.getElementById(slotDivId(slot))
-        if (!existingHighlightEl) {
-            return
-        }
-
-        document.body.removeChild(existingHighlightEl)
+    const existingHighlightEl = document.getElementById(slotDivId(slot))
+    if (!existingHighlightEl) {
+        return
     }
+
+    document.body.removeChild(existingHighlightEl)
 }
 
 function createHighlightElement(slot: GptSlot, iframe: HTMLIFrameElement) {

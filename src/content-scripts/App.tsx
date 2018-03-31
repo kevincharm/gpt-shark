@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { Message, GptMessage, UpdateAdsMapMessage } from '../common/types'
 import { parseGptPayload, GptSlot } from './gpt'
-import GptRequestItem from './GptRequestItem'
+import GptSlotItem from './GptSlotItem'
 import deepEqual = require('deep-equal')
 
 interface State {
+    forceHighlightAll: boolean
     slots: GptSlot[]
 }
 
@@ -13,10 +14,15 @@ class App extends React.Component<{}, State> {
         super(props)
 
         this.state = {
+            forceHighlightAll: false,
             slots: []
         }
 
         browser.runtime.onMessage.addListener(this.messageListener)
+    }
+
+    onClick = () => {
+        this.setState({ forceHighlightAll: !this.state.forceHighlightAll })
     }
 
     messageListener = (message: Message) => {
@@ -58,13 +64,20 @@ class App extends React.Component<{}, State> {
         window.postMessage(updateMessage, '*')
     }
 
+    mapSlots() {
+        const { slots, forceHighlightAll } = this.state
+        return slots.map((slot, s) => <GptSlotItem key={s} slot={slot} forceHighlightAll={forceHighlightAll} />)
+    }
+
     render() {
+        const highlightAllButtonLabel = this.state.forceHighlightAll ? 'Unhighlight All' : 'Highlight All'
         return (
             <div className="gpt-shark-console">
-                <div className="gpt-shark-console__title">GPT SHARK</div>
-                <div className="gpt-shark-console__body">
-                    {<GptRequestItem request={{ correlator: '', slots: this.state.slots }} />}
+                <div className="gpt-shark-console__title">
+                    GPT SHARK
+                    <button onClick={this.onClick}>{highlightAllButtonLabel}</button>
                 </div>
+                <div className="gpt-shark-console__body">{this.mapSlots()}</div>
             </div>
         )
     }
