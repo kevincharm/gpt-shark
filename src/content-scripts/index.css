@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata');
 
 #gpt-shark-root {
-    z-index: 99999999;
     position: fixed;
     width: 100%;
     bottom: 0px;

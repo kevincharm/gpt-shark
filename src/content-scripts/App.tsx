@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Message } from '../common/types'
+import { Message, GptMessage, UpdateAdsMapMessage } from '../common/types'
 import { parseGptPayload, GptSlot } from './gpt'
 import GptRequestItem from './GptRequestItem'
 import deepEqual = require('deep-equal')
@@ -22,28 +22,35 @@ class App extends React.Component<{}, State> {
     messageListener = (message: Message) => {
         console.log('[gpt-shark] received message:', message)
         if (message.kind === 'gpt-ad-call') {
-            console.log('[gpt-shark]', message.payload)
-            const parsedGptPayload = parseGptPayload(message.payload)
-            const { slots } = parsedGptPayload
+            this.gptAdCallHandler(message)
+        }
+    }
 
-            const resolvedSlots = this.state.slots.slice()
-            const newSlots = slots.slice()
-            while (newSlots.length) {
-                const newSlot = newSlots.pop()!
-                const existing = resolvedSlots.find(oldSlot => deepEqual(newSlot.targeting, oldSlot.targeting))
-                if (existing) {
-                    const index = resolvedSlots.indexOf(existing)
-                    resolvedSlots.splice(index, 1, newSlot)
-                    continue
-                }
+    gptAdCallHandler(message: GptMessage) {
+        console.log('[gpt-shark]', message.payload)
+        const parsedGptPayload = parseGptPayload(message.payload)
+        const { slots } = parsedGptPayload
 
-                resolvedSlots.push(newSlot)
+        const resolvedSlots = this.state.slots.slice()
+        const newSlots = slots.slice()
+        while (newSlots.length) {
+            const newSlot = newSlots.pop()!
+            const existing = resolvedSlots.find(oldSlot => deepEqual(newSlot.targeting, oldSlot.targeting))
+            if (existing) {
+                const index = resolvedSlots.indexOf(existing)
+                resolvedSlots.splice(index, 1, newSlot)
+                continue
             }
 
-            this.setState({
-                slots: resolvedSlots
-            })
+            resolvedSlots.push(newSlot)
         }
+
+        this.setState({ slots: resolvedSlots })
+
+        const updateMessage: UpdateAdsMapMessage = {
+            kind: 'update-ads-map'
+        }
+        window.postMessage(updateMessage, '*')
     }
 
     render() {

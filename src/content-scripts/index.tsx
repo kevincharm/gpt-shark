@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import App from './App'
 import './index.css'
+import { INT32_MAX } from '../common/constants'
 
 start()
     .then()
@@ -23,6 +24,7 @@ async function start() {
         const el = document.createElement('div')
         el.id = 'gpt-shark-root'
         Object.assign(el.style, {
+            zIndex: INT32_MAX - 1,
             height: '30vh'
         })
         document.body.appendChild(el)

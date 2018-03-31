@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { UpdateAdsMapMessage } from '../common/types'
 import { GptRequest, GptSlot } from './gpt'
+import { INT32_MAX } from '../common/constants'
 
 export interface Props {
     request: GptRequest
@@ -44,40 +44,11 @@ function mapSlots(slots: GptSlot[]) {
  */
 function highlightGptIframe(slot: GptSlot) {
     return () => {
-        const updateMessage: UpdateAdsMapMessage = {
-            kind: 'update-ads-map'
-        }
-        window.postMessage(updateMessage, '*')
-
         const existingHighlightEl = document.getElementById(slotDivId(slot))
         if (existingHighlightEl) {
             console.log('[gpt-shark] exists:', existingHighlightEl)
             return
         }
-
-        /*
-        const iframes: HTMLIFrameElement[] = Array.from(document.querySelectorAll('iframe[id^="google_ads_iframe_"]'))
-        if (!iframes.length) {
-            return
-        }
-
-        let matchedIframe = null
-        for (const iframe of iframes) {
-            try {
-                const scripts = (iframe as any).contentWindow.document.querySelectorAll('script')
-                const matchedScripts = Array.from(scripts).filter(
-                    (script: any) => script.text && script.text.match(slot.key)
-                )
-                if (!matchedScripts.length) {
-                    continue
-                }
-                matchedIframe = iframe
-            } catch (err) {
-                console.error(err)
-                console.log(iframe)
-            }
-        }
-        */
 
         try {
             const rawAdsMap = document.getElementById('gpt-shark-ads-map')!.textContent
@@ -116,15 +87,13 @@ function unhighlightGptIframe(slot: GptSlot) {
     }
 }
 
-const INT32_MAX = Math.pow(2, 31) - 1
-
 function createHighlightElement(slot: GptSlot, iframe: HTMLIFrameElement) {
     console.log('[gpt-shark] createHighlightElement:', slot)
     const iframeRect = iframe.getBoundingClientRect()
     const highlightEl = document.createElement('div')
     highlightEl.id = slotDivId(slot)
     Object.assign(highlightEl.style, {
-        zIndex: INT32_MAX,
+        zIndex: INT32_MAX - 2,
         position: 'absolute',
         content: ' ',
         top: `${iframe.offsetTop}px`,
