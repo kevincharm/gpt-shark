@@ -5,7 +5,7 @@ startListening()
 function startListening() {
     console.log('[gpt-shark] Started webRequest listener.')
 
-    browser.webRequest.onBeforeRequest.addListener(webRequestListener, {
+    browser.webRequest.onCompleted.addListener(webRequestListener, {
         urls: ['*://securepubads.g.doubleclick.net/*ads?*']
     })
 }
