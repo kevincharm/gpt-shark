@@ -1,5 +1,4 @@
 import * as React from 'react'
-import voidAsyncWrapper from '../common/async-wrapper'
 import { Message } from '../common/types'
 import { parseGptPayload, GptRequest, GptSlot } from './gpt'
 
@@ -15,10 +14,10 @@ class App extends React.Component<{}, State> {
             requests: []
         }
 
-        browser.runtime.onMessage.addListener(voidAsyncWrapper(this.messageListener))
+        browser.runtime.onMessage.addListener(this.messageListener)
     }
 
-    messageListener = async (message: Message) => {
+    messageListener = (message: Message) => {
         console.log('[gpt-shark] received message:', message)
         if (message.kind === 'gpt-ad-call') {
             console.log('[gpt-shark]', message.payload)
