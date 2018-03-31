@@ -1,4 +1,4 @@
-import { BaseMessage, GptMessage } from '../common/types'
+import { GptMessage, Message } from '../common/types'
 
 startListening()
 
@@ -29,7 +29,7 @@ async function webRequestListener(requestDetails: any) {
     return {}
 }
 
-async function sendMessage(message: BaseMessage) {
+async function sendMessage(message: Message) {
     try {
         const tabs = await browser.tabs.query({ active: true, currentWindow: true })
         await browser.tabs.sendMessage(tabs[0].id!, message)

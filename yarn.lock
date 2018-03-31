@@ -30,6 +30,14 @@
     "@cliqz-oss/firefox-client" "0.3.1"
     es6-promise "^2.0.1"
 
+"@types/deep-equal@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/deep-equal/-/deep-equal-1.0.1.tgz#71cfabb247c22bcc16d536111f50c0ed12476b03"
+
+"@types/doubleclick-gpt@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@types/doubleclick-gpt/-/doubleclick-gpt-0.0.1.tgz#aee262e3b5f8a638835be3553e0fccdb472a3f68"
+
 "@types/firefox-webext-browser@^58.0.2":
   version "58.0.2"
   resolved "https://registry.yarnpkg.com/@types/firefox-webext-browser/-/firefox-webext-browser-58.0.2.tgz#5265a631f9bb6725888793d70a988b2881c1d59d"

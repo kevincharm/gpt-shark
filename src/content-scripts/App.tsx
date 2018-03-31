@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { Message } from '../common/types'
-import { parseGptPayload, GptRequest } from './gpt'
+import { parseGptPayload, GptSlot } from './gpt'
 import GptRequestItem from './GptRequestItem'
+import deepEqual = require('deep-equal')
 
 interface State {
-    requests: GptRequest[]
+    slots: GptSlot[]
 }
 
 class App extends React.Component<{}, State> {
@@ -12,7 +13,7 @@ class App extends React.Component<{}, State> {
         super(props)
 
         this.state = {
-            requests: []
+            slots: []
         }
 
         browser.runtime.onMessage.addListener(this.messageListener)
@@ -23,9 +24,24 @@ class App extends React.Component<{}, State> {
         if (message.kind === 'gpt-ad-call') {
             console.log('[gpt-shark]', message.payload)
             const parsedGptPayload = parseGptPayload(message.payload)
+            const { slots } = parsedGptPayload
+
+            const resolvedSlots = this.state.slots.slice()
+            const newSlots = slots.slice()
+            while (newSlots.length) {
+                const newSlot = newSlots.pop()!
+                const existing = resolvedSlots.find(oldSlot => deepEqual(newSlot.targeting, oldSlot.targeting))
+                if (existing) {
+                    const index = resolvedSlots.indexOf(existing)
+                    resolvedSlots.splice(index, 1, newSlot)
+                    continue
+                }
+
+                resolvedSlots.push(newSlot)
+            }
 
             this.setState({
-                requests: [parsedGptPayload].concat(this.state.requests)
+                slots: resolvedSlots
             })
         }
     }
@@ -35,7 +51,7 @@ class App extends React.Component<{}, State> {
             <div className="gpt-shark-console">
                 <div className="gpt-shark-console__title">GPT SHARK</div>
                 <div className="gpt-shark-console__body">
-                    {this.state.requests.map((request, r) => <GptRequestItem key={r} request={request} />)}
+                    {<GptRequestItem request={{ correlator: '', slots: this.state.slots }} />}
                 </div>
             </div>
         )

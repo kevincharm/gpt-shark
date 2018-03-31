@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { UpdateAdsMapMessage } from '../common/types'
 import { GptRequest, GptSlot } from './gpt'
 
 export interface Props {
@@ -43,11 +44,18 @@ function mapSlots(slots: GptSlot[]) {
  */
 function highlightGptIframe(slot: GptSlot) {
     return () => {
+        const updateMessage: UpdateAdsMapMessage = {
+            kind: 'update-ads-map'
+        }
+        window.postMessage(updateMessage, '*')
+
         const existingHighlightEl = document.getElementById(slotDivId(slot))
         if (existingHighlightEl) {
+            console.log('[gpt-shark] exists:', existingHighlightEl)
             return
         }
 
+        /*
         const iframes: HTMLIFrameElement[] = Array.from(document.querySelectorAll('iframe[id^="google_ads_iframe_"]'))
         if (!iframes.length) {
             return
@@ -55,16 +63,40 @@ function highlightGptIframe(slot: GptSlot) {
 
         let matchedIframe = null
         for (const iframe of iframes) {
-            const scripts = Array.from((iframe as any).contentWindow.document.querySelectorAll('script'))
-            const matchedScripts = scripts.filter((script: any) => script.text && script.text.match(slot.key))
-            if (!matchedScripts.length) {
-                continue
+            try {
+                const scripts = (iframe as any).contentWindow.document.querySelectorAll('script')
+                const matchedScripts = Array.from(scripts).filter(
+                    (script: any) => script.text && script.text.match(slot.key)
+                )
+                if (!matchedScripts.length) {
+                    continue
+                }
+                matchedIframe = iframe
+            } catch (err) {
+                console.error(err)
+                console.log(iframe)
             }
-            matchedIframe = iframe
         }
+        */
 
-        if (matchedIframe) {
-            createHighlightElement(slot, matchedIframe)
+        try {
+            const rawAdsMap = document.getElementById('gpt-shark-ads-map')!.textContent
+            console.log('[gpt-shark]', rawAdsMap)
+            const adsMap = JSON.parse(rawAdsMap || '[]') as Array<{ key: string; iframeId: string }>
+            const adMap = adsMap.find(ad => ad.key === slot.key)
+            if (!adMap) {
+                return
+            }
+
+            const iframeId = `google_ads_iframe_${adMap.iframeId}`
+            const matchedIframe = document.getElementById(iframeId) as HTMLIFrameElement | null
+
+            console.log('[gpt-shark] matchedIframe:', matchedIframe)
+            if (matchedIframe) {
+                createHighlightElement(slot, matchedIframe)
+            }
+        } catch (err) {
+            console.error(`[gpt-shark] Couldn't find iframe!`, err)
         }
     }
 }
@@ -79,7 +111,8 @@ function unhighlightGptIframe(slot: GptSlot) {
             return
         }
 
-        existingHighlightEl.remove()
+        console.log('[gpt-shark] exists:', existingHighlightEl)
+        document.body.removeChild(existingHighlightEl)
     }
 }
 
@@ -94,8 +127,8 @@ function createHighlightElement(slot: GptSlot, iframe: HTMLIFrameElement) {
         zIndex: INT32_MAX,
         position: 'absolute',
         content: ' ',
-        top: `${iframeRect.top}px`,
-        left: `${iframeRect.left}px`,
+        top: `${iframe.offsetTop}px`,
+        left: `${iframe.offsetLeft}px`,
         height: `${iframeRect.height}px`,
         width: `${iframeRect.width}px`,
         backgroundColor: 'red'
