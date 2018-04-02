@@ -1,3 +1,10 @@
+/**
+ * WebExtension injected script entry.
+ * This bundle is injected into the page by the content script,
+ * so that we can get access to the page's execution context. More specifically;
+ * we need access to the global `window.googletag` used by GPT in the page's
+ * execution context.
+ */
 import { GptSharkAdsMap } from '../common/types'
 ;(function() {
     const script = document.createElement('script')

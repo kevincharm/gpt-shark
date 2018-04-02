@@ -1,3 +1,9 @@
+/**
+ * WebExtension background script entry.
+ * Try to do as little as possible here. This is not too bad to debug though;
+ * in Firefox go to about:debugging#addons and select the addon
+ * to open the devtools for the background script's execution environment.
+ */
 import { GptMessage, Message } from '../common/types'
 
 startListening()

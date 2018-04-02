@@ -1,3 +1,12 @@
+/**
+ * WebExtension content script entry.
+ * Most of the logic should be consolidated into this bundle. This bundle is injected
+ * into the page on every page load, but only has access to the page's DOM.
+ *
+ * A separate script is injected into the page so we can get access to the page's
+ * execution context, then we can communicate by serialisation/deserialisation of a
+ * script element (#gpt-shark-ads-map)
+ */
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import App from './App'
@@ -17,10 +26,7 @@ async function start() {
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const script = document.createElement('script')
-        script.src = browser.extension.getURL('/static/js/injectScript.js')
-        document.body.appendChild(script)
-        script.remove()
+        inject()
 
         const el = document.createElement('div')
         el.id = 'gpt-shark-root'
@@ -36,6 +42,13 @@ async function start() {
         })
         ReactDOM.render(<App />, el as HTMLElement)
     })
+}
+
+function inject() {
+    const script = document.createElement('script')
+    script.src = browser.extension.getURL('/static/js/injectScript.js')
+    document.body.appendChild(script)
+    script.remove()
 }
 
 export {}
