@@ -62,7 +62,8 @@ module.exports = {
         polyfills: require.resolve('./polyfills'),
         popup: paths.appPopupJs,
         background: paths.appBackgroundIndexJs,
-        contentScript: paths.appContentScriptJs
+        contentScript: paths.appContentScriptJs,
+        injectScript: paths.appInjectScriptJs
     },
     output: {
         // The build folder.

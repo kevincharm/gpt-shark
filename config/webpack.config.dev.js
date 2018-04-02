@@ -53,7 +53,8 @@ module.exports = {
         // initialization, it doesn't blow up the WebpackDevServer client, and
         // changing JS code would still trigger a refresh.
         background: paths.appBackgroundIndexJs,
-        contentScript: paths.appContentScriptJs
+        contentScript: paths.appContentScriptJs,
+        injectScript: appInjectScriptJs
     },
     output: {
         // Add /* filename */ comments to generated require()s in the output.

@@ -45,6 +45,7 @@ module.exports = {
     appPopupJs: resolveApp('src/popup/index.tsx'),
     appBackgroundIndexJs: resolveApp('src/background/index.ts'),
     appContentScriptJs: resolveApp('src/content-scripts/index.tsx'),
+    appInjectScriptJs: resolveApp('src/inject/index.ts'),
     appPackageJson: resolveApp('package.json'),
     appSrc: resolveApp('src'),
     yarnLockFile: resolveApp('yarn.lock'),

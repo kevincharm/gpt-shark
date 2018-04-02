@@ -28,6 +28,6 @@
   },
   "web_accessible_resources": [
     "browser-polyfill.js",
-    "inject.js"
+    "static/js/injectScript.js"
   ]
 }

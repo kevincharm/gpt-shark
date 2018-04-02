@@ -18,7 +18,7 @@ async function start() {
 
     document.addEventListener('DOMContentLoaded', () => {
         const script = document.createElement('script')
-        script.src = browser.extension.getURL('/inject.js')
+        script.src = browser.extension.getURL('/static/js/injectScript.js')
         document.body.appendChild(script)
         script.remove()
 

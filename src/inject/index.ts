@@ -1,6 +1,3 @@
-/**
- * TODO: Transpile this or something.
- */
 ;(function() {
     const script = document.createElement('script')
     script.type = 'application/json'
@@ -39,13 +36,13 @@
                 .map(id => {
                     const ad = ads[id]
                     const adUnitIdNumber = id.match(/^\/(\d+)\//)
-                    let kkey = Object.keys(ad).find(key => {
+                    const kkey = Object.keys(ad).find(key => {
                         const adKey = ad[key]
                         const isNumberString = typeof adKey === 'string' && adKey.match(/^\d+$/)
                         const notId = adUnitIdNumber && adUnitIdNumber[1] !== adKey
-                        return isNumberString && notId
+                        return !!(isNumberString && notId)
                     })
-                    return `{"key":"${ad[kkey]}","iframeId":"${id}","contentUrl":"${ad.getContentUrl()}"}`
+                    return `{"key":"${ad[kkey!]}","iframeId":"${id}","contentUrl":"${ad.getContentUrl()}"}`
                 })
                 .join(',')
             script.textContent = `[${adsDomMap}]`
