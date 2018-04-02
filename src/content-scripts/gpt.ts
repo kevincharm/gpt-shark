@@ -78,7 +78,7 @@ function getAdKeys(payload: GptPayload) {
 function getSlotSizes(payload: GptPayload) {
     const sizes = payload.prev_iu_szs || payload.sz
     if (!sizes) {
-        throw new Error(`Failed to retrieve ad key: ${sizes}`)
+        throw new Error(`Failed to retrieve slot sizes: ${sizes}`)
     }
     return sizes.split(',')
 }
@@ -91,7 +91,7 @@ function getSlotSizes(payload: GptPayload) {
 function getSlotTargeting(payload: GptPayload) {
     const scp = payload.prev_scp || payload.scp
     if (!scp) {
-        throw new Error(`Failed to retrieve ad key: ${scp}`)
+        throw new Error(`Failed to retrieve ad targeting: ${scp}`)
     }
     return scp.split('|')
 }
@@ -99,7 +99,7 @@ function getSlotTargeting(payload: GptPayload) {
 function getAdUnitParts(payload: GptPayload) {
     const iu = payload.iu_parts || payload.iu
     if (!iu) {
-        throw new Error(`Failed to retrieve ad key: ${iu}`)
+        throw new Error(`Failed to retrieve ad unit parts: ${iu}`)
     }
     return '/' + iu.split(',').join('/')
 }
