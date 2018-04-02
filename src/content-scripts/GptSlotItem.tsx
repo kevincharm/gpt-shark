@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { GptSlot } from './gpt'
+import { GptSharkAdsMap } from '../common/types'
 import { INT32_MAX } from '../common/constants'
 
 export interface Props {
@@ -89,12 +90,6 @@ function resolveHighlightVisibility(slot: GptSlot, highlight: boolean) {
     } else {
         unhighlightGptIframe(slot)
     }
-}
-
-interface GptSharkAdsMap {
-    key: string
-    iframeId: string
-    contentUrl: string
 }
 
 /**

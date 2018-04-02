@@ -1,3 +1,4 @@
+import { GptSharkAdsMap } from '../common/types'
 ;(function() {
     const script = document.createElement('script')
     script.type = 'application/json'
@@ -32,20 +33,23 @@
                 }
             }
             const ads = pubads[gkey]
-            const adsDomMap = Object.keys(ads)
-                .map(id => {
-                    const ad = ads[id]
-                    const adUnitIdNumber = id.match(/^\/(\d+)\//)
-                    const kkey = Object.keys(ad).find(key => {
-                        const adKey = ad[key]
-                        const isNumberString = typeof adKey === 'string' && adKey.match(/^\d+$/)
-                        const notId = adUnitIdNumber && adUnitIdNumber[1] !== adKey
-                        return !!(isNumberString && notId)
-                    })
-                    return `{"key":"${ad[kkey!]}","iframeId":"${id}","contentUrl":"${ad.getContentUrl()}"}`
+            const adsDomMap = Object.keys(ads).map(id => {
+                const ad = ads[id]
+                const adUnitIdNumber = id.match(/^\/(\d+)\//)
+                const adKeyPropertyName = Object.keys(ad).find(key => {
+                    const adKey = ad[key]
+                    const isNumberString = typeof adKey === 'string' && adKey.match(/^\d+$/)
+                    const notId = adUnitIdNumber && adUnitIdNumber[1] !== adKey
+                    return !!(isNumberString && notId)
                 })
-                .join(',')
-            script.textContent = `[${adsDomMap}]`
+                const adMap: GptSharkAdsMap = {
+                    key: ad[adKeyPropertyName!],
+                    contentUrl: ad.getContentUrl(),
+                    iframeId: id
+                }
+                return adMap
+            })
+            script.textContent = JSON.stringify(adsDomMap)
         } else {
             setTimeout(function() {
                 loadAdsMap()
