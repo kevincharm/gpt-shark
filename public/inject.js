@@ -38,10 +38,14 @@
             const adsDomMap = Object.keys(ads)
                 .map(id => {
                     const ad = ads[id]
+                    const adUnitIdNumber = id.match(/^\/(\d+)\//)
                     let kkey = Object.keys(ad).find(key => {
-                        return typeof ad[key] === 'string' && ad[key].match(/^\d+$/)
+                        const adKey = ad[key]
+                        const isNumberString = typeof adKey === 'string' && adKey.match(/^\d+$/)
+                        const notId = adUnitIdNumber && adUnitIdNumber[1] !== adKey
+                        return isNumberString && notId
                     })
-                    return `{"key":"${ad[kkey]}","iframeId":"${id}"}`
+                    return `{"key":"${ad[kkey]}","iframeId":"${id}","contentUrl":"${ad.getContentUrl()}"}`
                 })
                 .join(',')
             script.textContent = `[${adsDomMap}]`

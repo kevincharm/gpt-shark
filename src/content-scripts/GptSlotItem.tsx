@@ -91,6 +91,12 @@ function resolveHighlightVisibility(slot: GptSlot, highlight: boolean) {
     }
 }
 
+interface GptSharkAdsMap {
+    key: string
+    iframeId: string
+    contentUrl: string
+}
+
 /**
  * Finds the GPT iframe for the given slot, then highlights it.
  */
@@ -102,8 +108,8 @@ function highlightGptIframe(slot: GptSlot) {
 
     try {
         const rawAdsMap = document.getElementById('gpt-shark-ads-map')!.textContent
-        const adsMap = JSON.parse(rawAdsMap || '[]') as Array<{ key: string; iframeId: string }>
-        const adMap = adsMap.find(ad => ad.key === slot.key)
+        const adsMap = JSON.parse(rawAdsMap || '[]') as GptSharkAdsMap[]
+        const adMap = adsMap.find(ad => ad.key === slot.key || ad.contentUrl === slot.requestUrl)
         if (!adMap) {
             return
         }

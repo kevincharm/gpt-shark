@@ -18,6 +18,7 @@ export interface GptSlot {
     key: string
     adUnitPath: string
     sizes: string[]
+    requestUrl: string
     targeting: {
         [key: string]: string
     }
@@ -28,6 +29,7 @@ export function parseGptPayload(payload: GptPayload) {
         const keys = getAdKeys(payload)
         const slotSizes = getSlotSizes(payload)
         const slotTargeting = getSlotTargeting(payload)
+        const requestUrl = payload.__request_url__
         const slotCount = slotTargeting.length
         const slots: GptSlot[] = []
         for (let i = 0; i < slotCount; i++) {
@@ -39,7 +41,8 @@ export function parseGptPayload(payload: GptPayload) {
                 key: keys[i],
                 adUnitPath,
                 sizes,
-                targeting
+                targeting,
+                requestUrl
             })
         }
 

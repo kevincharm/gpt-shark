@@ -21,6 +21,7 @@ async function webRequestListener(requestDetails: any) {
         params[key] = value
     }
 
+    params.__request_url__ = requestDetails.url
     const gptMessage: GptMessage = { kind: 'gpt-ad-call', payload: params }
 
     console.log('[gpt-shark] sending message', gptMessage)
