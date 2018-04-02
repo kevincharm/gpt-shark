@@ -1,6 +1,6 @@
 export interface GptPayload {
     // TODO: Be defensive
-    adks: string
+    [key: string]: string
     correlator: string
     iu_parts: string
     prev_iu_szs: string
@@ -24,29 +24,84 @@ export interface GptSlot {
 }
 
 export function parseGptPayload(payload: GptPayload) {
-    const keys = payload.adks.split(',')
-    const slotSizes = payload.prev_iu_szs.split(',')
-    const slotTargeting = payload.prev_scp.split('|')
-    const slotCount = slotTargeting.length
-    const slots: GptSlot[] = []
-    for (let i = 0; i < slotCount; i++) {
-        const sizes = parseSizeString(slotSizes[i])
-        const targeting = parseTargetingString(slotTargeting[i])
-        const adUnitPath = '/' + payload.iu_parts.split(',').join('/')
-        slots.push({
-            correlator: payload.correlator,
-            key: keys[i],
-            adUnitPath,
-            sizes,
-            targeting
-        })
-    }
+    try {
+        const keys = getAdKeys(payload)
+        const slotSizes = getSlotSizes(payload)
+        const slotTargeting = getSlotTargeting(payload)
+        const slotCount = slotTargeting.length
+        const slots: GptSlot[] = []
+        for (let i = 0; i < slotCount; i++) {
+            const sizes = parseSizeString(slotSizes[i])
+            const targeting = parseTargetingString(slotTargeting[i])
+            const adUnitPath = getAdUnitParts(payload)
+            slots.push({
+                correlator: payload.correlator,
+                key: keys[i],
+                adUnitPath,
+                sizes,
+                targeting
+            })
+        }
 
-    const request: GptRequest = {
-        correlator: payload.correlator,
-        slots
+        const request: GptRequest = {
+            correlator: payload.correlator,
+            slots
+        }
+        return request
+    } catch (err) {
+        console.error(payload, err)
+        return {
+            correlator: '',
+            slots: []
+        }
     }
-    return request
+}
+
+/**
+ * Some logic to find the ad key.
+ * => "adk": "8597836759"
+ * TODO: Be smarter, Use pattern matching.
+ */
+function getAdKeys(payload: GptPayload) {
+    const adKeys = payload.adks || payload.adk
+    if (!adKeys) {
+        throw new Error(`Failed to retrieve ad key: ${adKeys}`)
+    }
+    return adKeys.split(',')
+}
+
+/**
+ * Some logic to find the slot size.
+ * => "sz": "300x250|300x300"
+ * TODO: Be smarter, Use pattern matching.
+ */
+function getSlotSizes(payload: GptPayload) {
+    const sizes = payload.prev_iu_szs || payload.sz
+    if (!sizes) {
+        throw new Error(`Failed to retrieve ad key: ${sizes}`)
+    }
+    return sizes.split(',')
+}
+
+/**
+ * Some logic to find the ad key.
+ * => scp: "keywords=gaming,australia&adblock=off&listing=listing"
+ * TODO: Be smarter, Use pattern matching.
+ */
+function getSlotTargeting(payload: GptPayload) {
+    const scp = payload.prev_scp || payload.scp
+    if (!scp) {
+        throw new Error(`Failed to retrieve ad key: ${scp}`)
+    }
+    return scp.split('|')
+}
+
+function getAdUnitParts(payload: GptPayload) {
+    const iu = payload.iu_parts || payload.iu
+    if (!iu) {
+        throw new Error(`Failed to retrieve ad key: ${iu}`)
+    }
+    return '/' + iu.split(',').join('/')
 }
 
 function parseSizeString(rawSizes: string) {

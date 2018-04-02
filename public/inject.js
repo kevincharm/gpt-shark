@@ -38,7 +38,10 @@
             const adsDomMap = Object.keys(ads)
                 .map(id => {
                     const ad = ads[id]
-                    return `{"key":"${ad.ka}","iframeId":"${id}"}`
+                    let kkey = Object.keys(ad).find(key => {
+                        return typeof ad[key] === 'string' && ad[key].match(/^\d+$/)
+                    })
+                    return `{"key":"${ad[kkey]}","iframeId":"${id}"}`
                 })
                 .join(',')
             script.textContent = `[${adsDomMap}]`
