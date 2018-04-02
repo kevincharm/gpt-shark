@@ -12,6 +12,7 @@ import * as ReactDOM from 'react-dom'
 import App from './App'
 import './index.css'
 import { INT32_MAX } from '../common/constants'
+import { AppState } from '../common/types'
 
 start()
     .then()
@@ -25,11 +26,13 @@ async function start() {
         return
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         inject()
 
         const el = document.createElement('div')
         el.id = 'gpt-shark-root'
+        const state = (await browser.storage.local.get()) as AppState
+        el.style.visibility = !!state.enabled ? 'visible' : 'hidden'
         Object.assign(el.style, {
             zIndex: INT32_MAX - 1,
             height: '30vh'
@@ -41,6 +44,18 @@ async function start() {
             height: '70vh'
         })
         ReactDOM.render(<App />, el as HTMLElement)
+
+        browser.storage.onChanged.addListener((changes, areaName) => {
+            if (areaName !== 'local') {
+                return
+            }
+
+            const enabledChanged = changes['enabled']
+            if (enabledChanged) {
+                console.log(enabledChanged)
+                el.style.visibility = !!enabledChanged.newValue ? 'visible' : 'hidden'
+            }
+        })
     })
 }
 

@@ -29,3 +29,7 @@ export interface GptSharkAdsMap {
      */
     iframeId: string
 }
+
+export interface AppState {
+    enabled: boolean
+}

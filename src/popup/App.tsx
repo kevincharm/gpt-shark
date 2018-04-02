@@ -1,25 +1,32 @@
 import * as React from 'react'
 import './App.css'
-
-const logo = require('./logo.svg')
+import { AppState } from '../common/types'
+import { getDefaultAppState } from '../common/constants'
 
 class App extends React.Component<{}, {}> {
     constructor(props: any) {
         super(props)
     }
 
-    showInterface = async () => {
-        // TODO: Show injected content-scripts interface
+    toggleEnabled = async () => {
+        const state = (await browser.storage.local.get('enabled')) as AppState
+
+        let newState: AppState
+        if (!state) {
+            newState = getDefaultAppState()
+        } else {
+            newState = {
+                enabled: !state.enabled
+            }
+        }
+
+        await browser.storage.local.set(newState)
     }
 
     render() {
         return (
             <div className="App">
-                <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    <h1 className="App-title">Welcome to React</h1>
-                </header>
-                <button onClick={this.showInterface}>Test</button>
+                <button onClick={this.toggleEnabled}>Toggle on/off</button>
             </div>
         )
     }
