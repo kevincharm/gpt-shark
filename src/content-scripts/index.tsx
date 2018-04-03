@@ -29,21 +29,16 @@ async function start() {
     document.addEventListener('DOMContentLoaded', async () => {
         inject()
 
-        const el = document.createElement('div')
-        el.id = 'gpt-shark-root'
-        const state = (await browser.storage.local.get()) as AppState
-        el.style.visibility = !!state.enabled ? 'visible' : 'hidden'
-        Object.assign(el.style, {
+        const root = document.createElement('div')
+        root.id = 'gpt-shark-root'
+        Object.assign(root.style, {
             zIndex: INT32_MAX - 1,
-            height: '30vh'
+            height: '35vh'
         })
-        document.body.appendChild(el)
-        Object.assign(document.body.style, {
-            position: 'absolute',
-            width: '100%',
-            height: '70vh'
-        })
-        ReactDOM.render(<App />, el as HTMLElement)
+        const state = (await browser.storage.local.get()) as AppState
+        toggleVisibility(root, state.enabled)
+        document.body.appendChild(root)
+        ReactDOM.render(<App />, root as HTMLElement)
 
         browser.storage.onChanged.addListener((changes, areaName) => {
             if (areaName !== 'local') {
@@ -53,10 +48,29 @@ async function start() {
             const enabledChanged = changes['enabled']
             if (enabledChanged) {
                 console.log(enabledChanged)
-                el.style.visibility = !!enabledChanged.newValue ? 'visible' : 'hidden'
+                toggleVisibility(root, !!enabledChanged.newValue)
             }
         })
     })
+}
+
+function toggleVisibility(root: HTMLElement, enabled: boolean) {
+    // TODO: get initial values before modifying body style
+    if (enabled) {
+        Object.assign(document.body.style, {
+            position: 'absolute',
+            width: '100%',
+            height: '65vh'
+        })
+        root.style.visibility = 'visible'
+    } else {
+        root.style.visibility = 'hidden'
+        Object.assign(document.body.style, {
+            position: 'initial',
+            width: 'initial',
+            height: 'initial'
+        })
+    }
 }
 
 function inject() {
