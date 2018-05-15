@@ -73,9 +73,10 @@ function toggleVisibility(root: HTMLElement, enabled: boolean) {
     }
 }
 
-function inject() {
+async function inject() {
     const script = document.createElement('script')
-    script.src = browser.extension.getURL('/static/js/injectScript.js')
+    // script.src = browser.extension.getURL('/static/js/injectScript.js')
+    script.textContent = (await import('../inject')).toString()
     document.body.appendChild(script)
     script.remove()
 }

@@ -3,9 +3,9 @@
   "version": "0.3.0",
   "private": true,
   "scripts": {
-    "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom",
+    "start": "yarn parcel watch src/manifest.json --target=web-extension --out-dir=build",
+    "build": "yarn parcel build src/manifest.json --target=web-extension --out-dir=build",
+    "test": "exit 0",
     "firefox": "web-ext run -s ./build",
     "zip": "web-ext build -s ./build",
     "sign": "web-ext sign -s ./build --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET"
@@ -59,7 +59,8 @@
     "@types/react-dom": "^16.0.4",
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
-    "typescript": "^2.8.1",
+    "parcel-bundler": "^1.8.1",
+    "typescript": "^2.8.3",
     "web-ext": "^2.6.0"
   },
   "jest": {
