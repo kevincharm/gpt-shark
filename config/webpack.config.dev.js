@@ -54,7 +54,7 @@ module.exports = {
         // changing JS code would still trigger a refresh.
         background: paths.appBackgroundIndexJs,
         contentScript: paths.appContentScriptJs,
-        injectScript: appInjectScriptJs
+        injectScript: paths.appInjectScriptJs
     },
     output: {
         // Add /* filename */ comments to generated require()s in the output.
