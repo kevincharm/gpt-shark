@@ -2,6 +2,8 @@ import * as React from 'react'
 import { Message, GptMessage, UpdateAdsMapMessage } from '../common/types'
 import { parseGptPayload, GptSlot } from './gpt'
 import GptSlotItem from './GptSlotItem'
+// @ts-ignore
+import PortalFrame from 'react-portal-frame'
 import deepEqual = require('deep-equal')
 
 interface State {
@@ -72,13 +74,15 @@ class App extends React.Component<{}, State> {
     render() {
         const highlightAllButtonLabel = this.state.forceHighlightAll ? 'Unhighlight All' : 'Highlight All'
         return (
-            <div className="gpt-shark-console">
-                <div className="gpt-shark-console__title">
-                    GPT SHARK
-                    <button onClick={this.onClick}>{highlightAllButtonLabel}</button>
+            <PortalFrame>
+                <div className="gpt-shark-console">
+                    <div className="gpt-shark-console__title">
+                        GPT SHARK
+                        <button onClick={this.onClick}>{highlightAllButtonLabel}</button>
+                    </div>
+                    <div className="gpt-shark-console__body">{this.mapSlots()}</div>
                 </div>
-                <div className="gpt-shark-console__body">{this.mapSlots()}</div>
-            </div>
+            </PortalFrame>
         )
     }
 }
