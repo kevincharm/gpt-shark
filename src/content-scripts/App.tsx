@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { StyledConsoleTitle, StyledConsoleBody } from './App.styled'
 import { Message, GptMessage, UpdateAdsMapMessage } from '../common/types'
 import { parseGptPayload, GptSlot } from './gpt'
 import GptSlotItem from './GptSlotItem'
@@ -76,11 +77,11 @@ class App extends React.Component<{}, State> {
         return (
             <PortalFrame>
                 <div className="gpt-shark-console">
-                    <div className="gpt-shark-console__title">
+                    <StyledConsoleTitle>
                         GPT SHARK
                         <button onClick={this.onClick}>{highlightAllButtonLabel}</button>
-                    </div>
-                    <div className="gpt-shark-console__body">{this.mapSlots()}</div>
+                    </StyledConsoleTitle>
+                    <StyledConsoleBody>{this.mapSlots()}</StyledConsoleBody>
                 </div>
             </PortalFrame>
         )
