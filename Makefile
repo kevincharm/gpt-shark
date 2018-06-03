@@ -1,7 +1,10 @@
 .PHONY: inspect build
 
+serve:
+	parcel src/manifest.json --web-extension --out-dir=build --no-cache
+
 inspect:
 	node inspect $$(which parcel) src/manifest.json --target=web-extension --out-dir=build --no-cache
 
 build:
-	parcel build src/manifest.json --target=web-extension --out-dir=build --no-cache
+	PARCEL_WORKERS=0 parcel build src/manifest.json --web-extension --out-dir=build --no-cache --no-minify
