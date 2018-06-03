@@ -1,3 +1,4 @@
+import { browser } from 'webextension-polyfill-ts'
 import * as React from 'react'
 import './App.css'
 import { AppState } from '../common/types'

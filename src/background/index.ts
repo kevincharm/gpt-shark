@@ -4,6 +4,7 @@
  * in Firefox go to about:debugging#addons and select the addon
  * to open the devtools for the background script's execution environment.
  */
+import { browser } from 'webextension-polyfill-ts'
 import { GptMessage, Message } from '../common/types'
 
 startListening()

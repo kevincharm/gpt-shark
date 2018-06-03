@@ -7,6 +7,7 @@
  * execution context, then we can communicate by serialisation/deserialisation of a
  * script element (#gpt-shark-ads-map)
  */
+import { browser } from 'webextension-polyfill-ts'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import App from './App'

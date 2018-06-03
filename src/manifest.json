@@ -12,13 +12,13 @@
     "<all_urls>"
   ],
   "background": {
-    "scripts": ["browser-polyfill.js", "background/index.ts"]
+    "scripts": ["background/index.ts"]
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "css": ["content-scripts/index.css"],
-      "js": ["browser-polyfill.js", "content-scripts/index.tsx"],
+      "js": ["content-scripts/index.tsx"],
       "run_at": "document_start"
     }
   ],
@@ -28,7 +28,6 @@
     "default_popup": "popup/index.html"
   },
   "web_accessible_resources": [
-    "browser-polyfill.js",
     "inject/index.ts"
   ]
 }
