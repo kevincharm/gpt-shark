@@ -76,10 +76,9 @@ function toggleVisibility(root: HTMLElement, enabled: boolean) {
 
 async function inject() {
     const script = document.createElement('script')
-    // script.src = browser.extension.getURL('/static/js/injectScript.js')
-    script.textContent = (await import('../inject')).toString()
+    script.src = browser.extension.getURL('inject/index.js')
+    script.id = 'gpt-shark-injected-script'
     document.body.appendChild(script)
-    script.remove()
 }
 
 export {}
