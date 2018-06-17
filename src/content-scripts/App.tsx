@@ -1,3 +1,4 @@
+import { browser } from 'webextension-polyfill-ts'
 import * as React from 'react'
 import { Message, GptMessage, UpdateAdsMapMessage } from '../common/types'
 import { parseGptPayload, GptSlot } from './gpt'
