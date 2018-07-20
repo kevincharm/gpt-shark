@@ -11,7 +11,6 @@ import { browser } from 'webextension-polyfill-ts'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import App from './App'
-import './index.css'
 import { INT32_MAX } from '../common/constants'
 import { AppState } from '../common/types'
 
